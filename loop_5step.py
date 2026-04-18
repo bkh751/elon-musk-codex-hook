@@ -114,6 +114,8 @@ if it is possible to make the task progress to 100%, then finish this (within 5H
 
 if this does not look so, estimate the remaining time to finish ( if the time spent for the task is more then 5 hour for making the progress 85%, then the estimate is likely more than 5 hour)
 
+Task별 진행이 끝나면 elon-startegy-log.jsonl 에 append 로 작업 기록을 남겨줘
+
 """.strip()
 
 print(json.dumps({
