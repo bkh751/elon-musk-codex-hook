@@ -9,7 +9,15 @@ STATE_DIR = Path(".codex/tmp")
 STATE_DIR.mkdir(parents=True, exist_ok=True)
 STATE_FILE = STATE_DIR / "five_step_loop_state.json"
 
-MAX_ITERS = int(os.environ.get("CODEX_5STEP_MAX_ITERS", "25"))
+ORIGINAL_PROMPT_FILE = STATE_DIR /"original_prompt.txt"
+
+original_prompt = ""
+
+if ORIGINAL_PROMPT_FILE.exists():
+
+    original_prompt = ORIGINAL_PROMPT_FILE.read_text()
+
+MAX_ITERS = int(os.environ.get("CODEX_5STEP_MAX_ITERS", "5"))
 
 def load_state():
     if STATE_FILE.exists():
@@ -78,17 +86,22 @@ state["iterations"] = iters + 1
 save_state(state)
 
 continuation_prompt = f"""
+
+
+Original Prompt:
+{original_prompt}
+
 Revise the previous result using Elon Musk's 5-step engineering process.
 
 Problems found:
 - {chr(10).join(f"- {x}" for x in issues)}
 
 Instructions:
-1. Re-question the requirement. (Compact the Requirement, Save your Context)
-2. Remove anything unnecessary. (Save your Context)
-3. Simplify the approach. (Spawn Subagents)
+1. Re-question the requirement. (Compact the Requirement, Save your Context, Review Remaining PRs and Merge If there is no question)
+2. Remove anything unnecessary. (Refactor and delete unnecessary codes, Make PRs for this)
+3. Simplify the approach. (Spawn Subagents, Save your Context)
 4. Improve speed of feedback or execution.(Make Evaluator Script)
-5. Only automate what is now stable. (Make Regression Test Code Which is Stable)
+5. Only automate what is now stable. (Make Regression Test Code Which is Stable, Make PR for the Feature if is stable)
 
 AUTO COMPACT if context is more than 35%
 
@@ -115,6 +128,7 @@ if it is possible to make the task progress to 100%, then finish this (within 5H
 if this does not look so, estimate the remaining time to finish ( if the time spent for the task is more then 5 hour for making the progress 85%, then the estimate is likely more than 5 hour)
 
 Task별 진행이 끝나면 elon-startegy-log.jsonl 에 append 로 작업 기록을 남겨줘
+
 
 """.strip()
 
